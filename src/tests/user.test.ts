@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import User, { IUser } from "../models/user";
 
 let app: Express;
-const user: IUser = {
+let user: IUser = {
     name: "test",
     email: "test@student.post.test",
     password: "1234567890",
@@ -55,5 +55,21 @@ describe("User get tests", () => {
     test("Test Get user by id- different user", async () => {
         const response = await request(app).get("/user/" + user2._id);
         expect(response.statusCode).toBe(400); // TODO: add correct status code
+    });
+});
+
+describe("User put tests", () => {
+    test("Test modify our user", async () => {
+        user.name = "modified_name"
+        const response = await request(app).put("/user").send(user);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.user.name).toEqual(user.name);
+    });
+
+    test("Test Get user by id- my user", async () => {
+        const response = await request(app).get("/user/" + user._id);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.user).toEqual(user);
+        expect(response.body.user.name).toEqual(user.name);
     });
 });

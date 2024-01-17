@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import userController from "../controllers/user";
+import authMiddleware from "../common/auth_middleware";
 /**
 * @swagger
 * tags:
@@ -88,7 +89,7 @@ import userController from "../controllers/user";
 *             schema:
 *               $ref: '#/components/schemas/User'
 */
-router.get("/profile", userController.getById.bind(userController));
+router.get("/profile", authMiddleware, userController.getById.bind(userController));
 
 /**
 * @swagger
@@ -109,5 +110,24 @@ router.get("/profile", userController.getById.bind(userController));
 *                   $ref: '#/components/schemas/BasicUser'
 */
 router.get("/", userController.get.bind(userController));
+
+/**
+* @swagger
+* /user:
+*   get:
+*     summary: modify a user
+*     tags: [User]
+*     security:
+*       - bearerAuth: []
+*     responses:
+*       200:
+*         description: the modified user
+*         content:
+*           application/json:
+*             schema:
+*               items:
+*                   $ref: '#/components/schemas/User'
+*/
+router.put("/", authMiddleware, userController.putById.bind(userController));
 
 export default router;

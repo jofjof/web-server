@@ -21,6 +21,13 @@ class UserController extends BaseController<IUser>{
         req.body.owner = _id;
         super.getById(req, res);
     }
+
+    async putById(req: AuthResquest, res: Response) {
+        console.log("postStudent:" + req.body);
+        const _id = req.user._id;
+        req.body.owner = _id;
+        super.putById(req, res);
+    }
 }
 
 export default new UserController();
