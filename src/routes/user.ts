@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import authController from "../controllers/auth_controller";
+import userController from "../controllers/user";
 /**
 * @swagger
 * tags:
@@ -88,7 +88,7 @@ import authController from "../controllers/auth_controller";
 *             schema:
 *               $ref: '#/components/schemas/User'
 */
-router.get("/profile", authController.register);
+router.get("/profile", userController.getById.bind(userController));
 
 /**
 * @swagger
@@ -108,6 +108,6 @@ router.get("/profile", authController.register);
 *               items:
 *                   $ref: '#/components/schemas/BasicUser'
 */
-router.get("/", authController.register);
+router.get("/", userController.get.bind(userController));
 
 export default router;

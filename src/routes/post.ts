@@ -206,7 +206,7 @@ router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostControl
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/comment", authMiddleware, PostController.post.bind(PostController));
+router.post("/comment", authMiddleware, PostController.comment.bind(PostController));
 
 /**
 * @swagger
@@ -222,6 +222,7 @@ router.post("/comment", authMiddleware, PostController.post.bind(PostController)
 *         application/json:
 *           schema:
 *             isLiked: boolean
+*             postId: string
 *     responses:
 *       200:
 *         description: the updated post
@@ -230,6 +231,6 @@ router.post("/comment", authMiddleware, PostController.post.bind(PostController)
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/like", authMiddleware, PostController.post.bind(PostController));
+router.post("/like", authMiddleware, PostController.like.bind(PostController));
 
 export default router;

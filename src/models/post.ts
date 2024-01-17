@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import { IUser } from "./user";
 
 export interface IPost {
     text: string;
     date: Date;
-    usersWhoLiked: string[];
+    usersWhoLiked: IUser[];
     image?: string;
     _id?: string;
     comments?: { user: string, text: string }[];

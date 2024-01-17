@@ -9,60 +9,71 @@ class PostController extends BaseController<IPost>{
     }
 
     async post(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.post(req, res);
     }
 
     async get(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.get(req, res);
     }
 
     async getById(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.getById(req, res);
     }
 
     async putById(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.putById(req, res);
     }
 
     async deleteById(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.deleteById(req, res);
     }
 
     async like(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
-        const _id = req.user._id;
-        req.body.owner = _id;
-        super.post(req, res);
+        const isLiked = req.body.isLiked;
+        const postId = req.body.postId;
+        try {
+            let requestedPost: IPost = await this.model.findById(postId);
+            if (isLiked && requestedPost.usersWhoLiked.find(({ _id }) => _id === req.user._id)
+                || !isLiked && !requestedPost.usersWhoLiked.find(({ _id }) => _id === req.user._id)) {
+                throw ("failed, can't like an already liked post");
+            } else {
+                const _id = req.user._id;
+                req.body.owner = _id;
+                isLiked ? requestedPost.usersWhoLiked.push(_id) :
+                    requestedPost.usersWhoLiked = requestedPost.usersWhoLiked.filter
+                        (({ _id }) => _id === req.user._id)
+                const obj = await this.model.findByIdAndUpdate(postId,);
+                res.status(201).send(obj);
+            }
+        }
+        catch (err) {
+            res.status(406).send(err.message)
+        }
     }
 
-    async unlike(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
-        const _id = req.user._id;
-        req.body.owner = _id;
-        super.post(req, res);
-    }
-    
     async comment(req: AuthResquest, res: Response) {
-        console.log("postStudent:" + req.body);
-        const _id = req.user._id;
-        req.body.owner = _id;
-        super.post(req, res);
+        const comment = req.body.comment;
+        const postId = req.body.postId;
+        try {
+            let requestedPost: IPost = await this.model.findById(postId);
+            requestedPost.comments.push(comment);
+            const obj = await this.model.findByIdAndUpdate(postId,);
+            res.status(201).send(obj);
+        }
+    catch(err) {
+        res.status(406).send(err.message)
     }
+}
 }
 
 export default new PostController();
