@@ -108,7 +108,7 @@ import authMiddleware from "../common/auth_middleware";
 *               items:
 *                   $ref: '#/components/schemas/Chat'
 */
-router.get("/", ChatController.get.bind(ChatController));
+router.get("/", authMiddleware, ChatController.get.bind(ChatController));
 
 /**
 * @swagger
@@ -126,6 +126,6 @@ router.get("/", ChatController.get.bind(ChatController));
 *             schema:
 *               $ref: '#/components/schemas/Chat'
 */
-router.get("/:id", ChatController.getById.bind(ChatController));
+router.get("/:id", authMiddleware, ChatController.getById.bind(ChatController));
 
 export default router;

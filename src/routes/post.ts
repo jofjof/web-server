@@ -102,7 +102,7 @@ router.get("/:id", PostController.getById.bind(PostController));
 
 /**
 * @swagger
-* /post/:user_id:
+* /post/user/:user_id:
 *   get:
 *     summary: get all posts of user by user's id
 *     tags: [Post]
@@ -118,7 +118,7 @@ router.get("/:id", PostController.getById.bind(PostController));
 *               items:
 *                   $ref: '#/components/schemas/Post'
 */
-router.get("/:user_id", PostController.getById.bind(PostController));
+router.get("/user/:user_id", PostController.getById.bind(PostController));
 
 /**
 * @swagger
@@ -197,6 +197,7 @@ router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostControl
 *       content:
 *         application/json:
 *           schema:
+*             postId: string
 *             $ref: '#/components/schemas/Comment'
 *     responses:
 *       200:
