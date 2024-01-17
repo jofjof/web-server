@@ -109,3 +109,5 @@ router.get("/profile", authController.register);
 *                   $ref: '#/components/schemas/BasicUser'
 */
 router.get("/", authController.register);
+
+export default router;

@@ -3,9 +3,10 @@ env.config();
 import express, { Express } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import studentRoute from "./routes/student_route";
-import studentPostRoute from "./routes/student_post_route";
-import authRoute from "./routes/auth_route";
+import postRouter from "./routes/post";
+import userRouter from "./routes/user";
+import chatRouter from "./routes/chat";
+import authRouter from "./routes/auth";
 
 const initApp = (): Promise<Express> => {
   const promise = new Promise<Express>((resolve) => {
@@ -17,9 +18,10 @@ const initApp = (): Promise<Express> => {
       const app = express();
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));
-      app.use("/student", studentRoute);
-      app.use("/studentpost", studentPostRoute);
-      app.use("/auth", authRoute);
+      app.use("/post", postRouter);
+      app.use("/chat", chatRouter);
+      app.use("/user", userRouter);
+      app.use("/auth", authRouter);
       resolve(app);
     });
   });

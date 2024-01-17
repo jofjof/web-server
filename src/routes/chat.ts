@@ -127,3 +127,5 @@ router.get("/", studentPostController.get.bind(studentPostController));
 *               $ref: '#/components/schemas/Chat'
 */
 router.get("/:id", studentPostController.getById.bind(studentPostController));
+
+export default router;
