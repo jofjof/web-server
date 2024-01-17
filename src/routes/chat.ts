@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import studentPostController from "../controllers/student_post_controller";
+import ChatController from "../controllers/chat";
 import authMiddleware from "../common/auth_middleware";
 
 /**
@@ -108,7 +108,7 @@ import authMiddleware from "../common/auth_middleware";
 *               items:
 *                   $ref: '#/components/schemas/Chat'
 */
-router.get("/", studentPostController.get.bind(studentPostController));
+router.get("/", ChatController.get.bind(ChatController));
 
 /**
 * @swagger
@@ -126,6 +126,6 @@ router.get("/", studentPostController.get.bind(studentPostController));
 *             schema:
 *               $ref: '#/components/schemas/Chat'
 */
-router.get("/:id", studentPostController.getById.bind(studentPostController));
+router.get("/:id", ChatController.getById.bind(ChatController));
 
 export default router;

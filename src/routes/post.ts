@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import studentPostController from "../controllers/student_post_controller";
+import PostController from "../controllers/post";
 import authMiddleware from "../common/auth_middleware";
 
 /**
@@ -82,7 +82,7 @@ import authMiddleware from "../common/auth_middleware";
 *               items:
 *                   $ref: '#/components/schemas/Post'
 */
-router.get("/", studentPostController.get.bind(studentPostController));
+router.get("/", PostController.get.bind(PostController));
 
 /**
 * @swagger
@@ -98,7 +98,7 @@ router.get("/", studentPostController.get.bind(studentPostController));
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.get("/:id", studentPostController.getById.bind(studentPostController));
+router.get("/:id", PostController.getById.bind(PostController));
 
 /**
 * @swagger
@@ -118,7 +118,7 @@ router.get("/:id", studentPostController.getById.bind(studentPostController));
 *               items:
 *                   $ref: '#/components/schemas/Post'
 */
-router.get("/:user_id", studentPostController.getById.bind(studentPostController));
+router.get("/:user_id", PostController.getById.bind(PostController));
 
 /**
 * @swagger
@@ -142,7 +142,7 @@ router.get("/:user_id", studentPostController.getById.bind(studentPostController
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/", authMiddleware, studentPostController.post.bind(studentPostController));
+router.post("/", authMiddleware, PostController.post.bind(PostController));
 
 /**
 * @swagger
@@ -166,7 +166,7 @@ router.post("/", authMiddleware, studentPostController.post.bind(studentPostCont
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.put("/:id", authMiddleware, studentPostController.putById.bind(studentPostController));
+router.put("/:id", authMiddleware, PostController.putById.bind(PostController));
 
 /**
 * @swagger
@@ -182,7 +182,7 @@ router.put("/:id", authMiddleware, studentPostController.putById.bind(studentPos
 *       200:
 *         description: the post was successfuly deleted
 */
-router.delete("/:id", authMiddleware, studentPostController.deleteById.bind(studentPostController));
+router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostController));
 
 /**
 * @swagger
@@ -206,7 +206,7 @@ router.delete("/:id", authMiddleware, studentPostController.deleteById.bind(stud
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/comment", authMiddleware, studentPostController.post.bind(studentPostController));
+router.post("/comment", authMiddleware, PostController.post.bind(PostController));
 
 /**
 * @swagger
@@ -230,6 +230,6 @@ router.post("/comment", authMiddleware, studentPostController.post.bind(studentP
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/like", authMiddleware, studentPostController.post.bind(studentPostController));
+router.post("/like", authMiddleware, PostController.post.bind(PostController));
 
 export default router;
