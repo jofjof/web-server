@@ -28,16 +28,28 @@ import authController from "../controllers/auth_controller";
 *       required:
 *         - email
 *         - password
+*         - name
 *       properties:
+*         id:
+*           type: string
+*           description: The user's id
 *         email:
 *           type: string
-*           description: The user email
+*           description: The user's email
 *         password:
 *           type: string
-*           description: The user password
+*           description: The user's password
+*         name:
+*           type: string
+*           description: The user's name
+*         image:
+*           type: string
+*           description: path to the user's profile image
 *       example:
 *         email: 'bob@gmail.com'
 *         password: '123456'
+*         name: 'bobo'
+*         image: '/path/to/image'
 */
 
 /**
@@ -112,7 +124,7 @@ router.post("/login", authController.login);
 *   get:
 *     summary: logout a user
 *     tags: [Auth]
-*     description: need to provide the refresh token in the auth header
+*     description: refresh token has to be provided in the auth header
 *     security:
 *       - bearerAuth: []
 *     responses:
@@ -120,6 +132,24 @@ router.post("/login", authController.login);
 *         description: logout completed successfully
 */
 router.get("/logout", authController.logout);
+
+/**
+* @swagger
+* /auth/logout:
+*   get:
+*     summary: get a new access token using the refresh token
+*     tags: [Auth]
+*     description: refresh token has to be provided in the auth header
+*     security:
+*       - bearerAuth: []
+*     responses:
+*       200:
+*         description: the access & refresh tokens
+*         content: 
+*           application/json:
+*               schema:
+*                   $ref: '#components/schemas/Tokens'
+*/
 router.get("/refresh", authController.refresh);
 
 export default router;

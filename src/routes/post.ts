@@ -1,0 +1,235 @@
+import express from "express";
+const router = express.Router();
+import studentPostController from "../controllers/student_post_controller";
+import authMiddleware from "../common/auth_middleware";
+
+/**
+* @swagger
+* tags:
+*   name: Post
+*   description: The Posts API
+*/
+
+
+/**
+* @swagger
+* components:
+*   securitySchemes:
+*     bearerAuth:
+*       type: http
+*       scheme: bearer
+*       bearerFormat: JWT
+*/
+
+/**
+* @swagger
+* components:
+*   schemas:
+*     Post:
+*       type: object
+*       required:
+*         - text
+*       properties:
+*         id:
+*           type: string
+*           description: The post's id
+*         text:
+*           type: string
+*           description: The post's text
+*         image:
+*           type: string
+*           description: path to the post's image
+*         date:
+*           type: date
+*           description: The post's creation time
+*         likes_amount:
+*           type: integer
+*           description: the amount of likes the post has
+*         comments_amount:
+*           type: integer
+*           description: the amount of comments the post has
+*         user_name:
+*           type: string
+*           description: the name of the user who created the post
+*         user_image:
+*           type: string
+*           description: the image of the user who created the post
+*         isLiked:
+*           type: boolean
+*           description: is the post iked by the current user
+*         comments:
+*           type: integer
+*           description: the comments the post has
+*       example:
+*         text: 'this is a post'
+*         user_name: 'bobo'
+*         image: '/path/to/image'
+*/
+
+/**
+* @swagger
+* /post:
+*   get:
+*     summary: get all posts
+*     tags: [Post]
+*     responses:
+*       200:
+*         description: all posts
+*         content:
+*           application/json:
+*             schema:
+*               type: array
+*               items:
+*                   $ref: '#/components/schemas/Post'
+*/
+router.get("/", studentPostController.get.bind(studentPostController));
+
+/**
+* @swagger
+* /post/:id:
+*   get:
+*     summary: get post by id
+*     tags: [Post]
+*     responses:
+*       200:
+*         description: the requested post
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Post'
+*/
+router.get("/:id", studentPostController.getById.bind(studentPostController));
+
+/**
+* @swagger
+* /post/:user_id:
+*   get:
+*     summary: get all posts of user by user's id
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     responses:
+*       200:
+*         description: all posts of a specific user
+*         content:
+*           application/json:
+*             schema:
+*               type: array
+*               items:
+*                   $ref: '#/components/schemas/Post'
+*/
+router.get("/:user_id", studentPostController.getById.bind(studentPostController));
+
+/**
+* @swagger
+* /post/:
+*   post:
+*     summary: create a new post
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Post'
+*     responses:
+*       200:
+*         description: the created post
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Post'
+*/
+router.post("/", authMiddleware, studentPostController.post.bind(studentPostController));
+
+/**
+* @swagger
+* /post/:id:
+*   put:
+*     summary: modify a post
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Post'
+*     responses:
+*       200:
+*         description: the updated post
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Post'
+*/
+router.put("/:id", authMiddleware, studentPostController.putById.bind(studentPostController));
+
+/**
+* @swagger
+* /post/:id:
+*   delete:
+*     summary: delete a post
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*     responses:
+*       200:
+*         description: the post was successfuly deleted
+*/
+router.delete("/:id", authMiddleware, studentPostController.deleteById.bind(studentPostController));
+
+/**
+* @swagger
+* /post/comment:
+*   post:
+*     summary: add a comment to a post
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Comment'
+*     responses:
+*       200:
+*         description: the updated post
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Post'
+*/
+router.post("/comment", authMiddleware, studentPostController.post.bind(studentPostController));
+
+/**
+* @swagger
+* /post/like:
+*   post:
+*     summary: like a post
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             isLiked: boolean
+*     responses:
+*       200:
+*         description: the updated post
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Post'
+*/
+router.post("/like", authMiddleware, studentPostController.post.bind(studentPostController));
+
+export default router;
