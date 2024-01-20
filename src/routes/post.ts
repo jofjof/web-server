@@ -21,6 +21,8 @@ import authMiddleware from "../common/auth_middleware";
 *       bearerFormat: JWT
 */
 
+
+// TODO: create a schema for PostInput and Post ig
 /**
 * @swagger
 * components:
@@ -197,8 +199,6 @@ router.put("/", authMiddleware, PostController.putById.bind(PostController));
 *        description: ID of the post you'd like to delete
 *     security:
 *       - bearerAuth: []
-*     requestBody:
-*       required: true
 *     responses:
 *       200:
 *         description: the post was successfuly deleted

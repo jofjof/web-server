@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { PopulatedDoc } from "mongoose";
 import { IUser } from "./user";
 
 export interface IPost {
     text: string;
     date: Date;
-    usersWhoLiked: IUser[];
+    usersWhoLiked: string[];
     image?: string;
     _id?: string;
     comments?: { user: string, text: string }[];
-    createdBy: string;
+    createdBy: PopulatedDoc<IUser>;
 }
 
 const postSchema = new mongoose.Schema<IPost>({
@@ -29,14 +29,14 @@ const postSchema = new mongoose.Schema<IPost>({
             ref: 'User'
         }], text: String
     }],
-    usersWhoLiked: [[{
+    usersWhoLiked: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }]],
-    createdBy: [{
+    }],
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }
 });
 
 export default mongoose.model<IPost>("Post", postSchema);

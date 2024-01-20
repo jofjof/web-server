@@ -21,7 +21,6 @@ const register = async (req: Request, res: Response) => {
         const tokens = await createTokens(response);
         const user = { ...response['_doc'], ...tokens };
         delete user['refreshTokens'];
-        console.log(user)
         return res.status(201).send(user);
     } catch (err) {
         return res.status(400).send(err.message);

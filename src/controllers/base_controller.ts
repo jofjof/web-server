@@ -25,6 +25,7 @@ export class BaseController<ModelType>{
     async getById(req: Request, res: Response) {
         try {
             const obj = await this.model.findById(req.params.id);
+            if (!obj) res.status(404);
             res.send(obj);
         } catch (err) {
             res.status(500).json({ message: err.message });
@@ -43,8 +44,8 @@ export class BaseController<ModelType>{
 
     async putById(req: Request, res: Response) {
         try {
-            const obj = await this.model.findByIdAndUpdate(req.body._id, req.body);
-            res.status(201).send(obj);
+            const obj = await this.model.findByIdAndUpdate(req.body._id, req.body, { new: true });
+            res.status(200).send(obj);
         } catch (err) {
             console.log(err);
             res.status(406).send("fail: " + err.message);
@@ -53,8 +54,9 @@ export class BaseController<ModelType>{
 
     async deleteById(req: Request, res: Response) {
         try {
-            const obj = await this.model.findByIdAndDelete(req.params.id);
-            res.status(201).send(obj);
+            console.log(req.params.id);
+            await this.model.findByIdAndDelete(req.params.id);
+            res.status(200).send();
         } catch (err) {
             console.log(err);
             res.status(406).send("fail: " + err.message);
