@@ -6,20 +6,24 @@ import jwt from 'jsonwebtoken';
 const register = async (req: Request, res: Response) => {
     const email = req.body.email;
     const password = req.body.password;
+    const name = req.body.name;
     if (!email || !password) {
         return res.status(400).send("missing email or password");
     }
     try {
-        const rs = await User.findOne({ 'email': email });
-        if (rs != null) {
-            return res.status(406).send("email already exists");
+        const doesExist = await User.findOne({ $or: [{ 'email': email }, { 'name': name }] });
+        if (doesExist) {
+            return res.status(406).send("email or name already exists");
         }
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt);
-        const rs2 = await User.create({ 'email': email, 'password': encryptedPassword });
-        return res.status(201).send(rs2);
+        const response = await User.create({ 'email': email, 'name': name, 'password': encryptedPassword });
+        const tokens = await createTokens(response);
+        const user = { ...response['_doc'], ...tokens };
+        delete user['refreshTokens'];
+        return res.status(201).send(user);
     } catch (err) {
-        return res.status(400).send("error missing email or password");
+        return res.status(400).send(err.message);
     }
 }
 
@@ -31,7 +35,7 @@ const login = async (req: Request, res: Response) => {
     }
     try {
         const user = await User.findOne({ 'email': email });
-        if (user == null) {
+        if (!user) {
             return res.status(401).send("email or password incorrect");
         }
         const match = await bcrypt.compare(password, user.password);
@@ -39,18 +43,8 @@ const login = async (req: Request, res: Response) => {
             return res.status(401).send("email or password incorrect");
         }
 
-        const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-        const refreshToken = jwt.sign({ _id: user._id }, process.env.JWT_REFRESH_SECRET);
-        if (user.refreshTokens == null) {
-            user.refreshTokens = [refreshToken];
-        } else {
-            user.refreshTokens.push(refreshToken);
-        }
-        await user.save();
-        return res.status(200).send({
-            'accessToken': accessToken,
-            'refreshToken': refreshToken
-        });
+        const tokens = await createTokens(user);
+        return res.status(200).send(tokens);
     } catch (err) {
         return res.status(400).send("error missing email or password");
     }
@@ -59,9 +53,8 @@ const login = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
     const authHeader = req.headers['authorization'];
     const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-    if (refreshToken == null) return res.sendStatus(401);
+    if (!refreshToken) return res.sendStatus(401);
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, user: { '_id': string }) => {
-        console.log(err);
         if (err) return res.sendStatus(401);
         try {
             const userDb = await User.findOne({ '_id': user._id });
@@ -70,7 +63,7 @@ const logout = async (req: Request, res: Response) => {
                 await userDb.save();
                 return res.sendStatus(401);
             } else {
-                userDb.refreshTokens = userDb.refreshTokens.filter(t => t !== refreshToken);
+                userDb.refreshTokens = userDb.refreshTokens.filter(token => token !== refreshToken);
                 await userDb.save();
                 return res.sendStatus(200);
             }
@@ -83,7 +76,7 @@ const logout = async (req: Request, res: Response) => {
 const refresh = async (req: Request, res: Response) => {
     const authHeader = req.headers['authorization'];
     const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-    if (refreshToken == null) return res.sendStatus(401);
+    if (!refreshToken) return res.sendStatus(401);
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, user: { '_id': string }) => {
         if (err) {
             console.log(err);
@@ -96,9 +89,9 @@ const refresh = async (req: Request, res: Response) => {
                 await userDb.save();
                 return res.sendStatus(401);
             }
-            const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-            const newRefreshToken = jwt.sign({ _id: user._id }, process.env.JWT_REFRESH_SECRET);
-            userDb.refreshTokens = userDb.refreshTokens.filter(t => t !== refreshToken);
+            const accessToken = getAccessToken(user._id);
+            const newRefreshToken = getRefreshToken(user._id);
+            userDb.refreshTokens = userDb.refreshTokens.filter(token => token !== refreshToken);
             userDb.refreshTokens.push(newRefreshToken);
             await userDb.save();
             return res.status(200).send({
@@ -109,6 +102,30 @@ const refresh = async (req: Request, res: Response) => {
             res.sendStatus(401).send(err.message);
         }
     });
+}
+
+const createTokens = async (user) => {
+    const accessToken = getAccessToken(user._id);
+    const refreshToken = getRefreshToken(user._id);
+    if (!user.refreshTokens) {
+        user.refreshTokens = [refreshToken];
+    } else {
+        user.refreshTokens.push(refreshToken);
+    }
+    await user.save();
+
+    return {
+        'accessToken': accessToken,
+        'refreshToken': refreshToken
+    };
+}
+
+const getAccessToken = (id: string) => {
+    return jwt.sign({ _id: id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+}
+
+const getRefreshToken = (id: string) => {
+    return jwt.sign({ _id: id }, process.env.JWT_SECRET);
 }
 
 export default {

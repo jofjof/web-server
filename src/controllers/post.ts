@@ -15,8 +15,6 @@ class PostController extends BaseController<IPost>{
     }
 
     async get(req: AuthResquest, res: Response) {
-        const _id = req.user._id;
-        req.body.owner = _id;
         super.get(req, res);
     }
 

@@ -35,8 +35,8 @@ beforeAll(async () => {
     await Post.deleteMany();
     const response = await request(app).post("/auth/register").send(user);
     user._id = response.body._id;
-    const response2 = await request(app).post("/auth/login").send(user);
-    accessToken = response2.body.accessToken;
+    // const response2 = await request(app).post("/auth/login").send(user);
+    accessToken = response.body.accessToken;
 });
 
 afterAll(async () => {
