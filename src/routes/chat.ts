@@ -112,12 +112,19 @@ router.get("/", authMiddleware, ChatController.get.bind(ChatController));
 
 /**
 * @swagger
-* /chat/:id:
+* /chat/{id}:
 *   get:
 *     summary: get chat by id
 *     tags: [Chat]
 *     security:
 *       - bearerAuth: []
+*     parameters:
+*      - in: path
+*        name: id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the chat you'd like to get
 *     responses:
 *       200:
 *         description: the requested chat

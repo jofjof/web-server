@@ -86,10 +86,17 @@ router.get("/", PostController.get.bind(PostController));
 
 /**
 * @swagger
-* /post/:id:
+* /post/{id}:
 *   get:
 *     summary: get post by id
 *     tags: [Post]
+*     parameters:
+*      - in: path
+*        name: id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the post to get
 *     responses:
 *       200:
 *         description: the requested post
@@ -102,12 +109,19 @@ router.get("/:id", PostController.getById.bind(PostController));
 
 /**
 * @swagger
-* /post/user/:user_id:
+* /post/user/{user_id}:
 *   get:
 *     summary: get all posts of user by user's id
 *     tags: [Post]
 *     security:
 *       - bearerAuth: []
+*     parameters:
+*      - in: path
+*        name: user_id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the user whose posts you want
 *     responses:
 *       200:
 *         description: all posts of a specific user
@@ -118,11 +132,11 @@ router.get("/:id", PostController.getById.bind(PostController));
 *               items:
 *                   $ref: '#/components/schemas/Post'
 */
-router.get("/user/:user_id", PostController.getById.bind(PostController));
+router.get("/user/:user_id", PostController.getByUserId.bind(PostController));
 
 /**
 * @swagger
-* /post/:
+* /post:
 *   post:
 *     summary: create a new post
 *     tags: [Post]
@@ -146,7 +160,7 @@ router.post("/", authMiddleware, PostController.post.bind(PostController));
 
 /**
 * @swagger
-* /post/:
+* /post:
 *   put:
 *     summary: modify a post
 *     tags: [Post]
@@ -170,10 +184,17 @@ router.put("/", authMiddleware, PostController.putById.bind(PostController));
 
 /**
 * @swagger
-* /post/:id:
+* /post/{post_id}:
 *   delete:
 *     summary: delete a post
 *     tags: [Post]
+*     parameters:
+*      - in: path
+*        name: post_id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the post you'd like to delete
 *     security:
 *       - bearerAuth: []
 *     requestBody:
@@ -186,12 +207,19 @@ router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostControl
 
 /**
 * @swagger
-* /post/comment/:id:
+* /post/comment/{post_id}:
 *   post:
 *     summary: add a comment to a post
 *     tags: [Post]
 *     security:
 *       - bearerAuth: []
+*     parameters:
+*      - in: path
+*        name: post_id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the post you'd like to comment on
 *     requestBody:
 *       required: true
 *       content:
@@ -211,19 +239,19 @@ router.post("/comment/:id", authMiddleware, PostController.comment.bind(PostCont
 
 /**
 * @swagger
-* /post/like/:id:
+* /post/like/{post_id}:
 *   post:
 *     summary: like a post
 *     tags: [Post]
 *     security:
 *       - bearerAuth: []
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             isLiked: boolean
-*             postId: string
+*     parameters:
+*      - in: path
+*        name: post_id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the post you want to like
 *     responses:
 *       200:
 *         description: the updated post
@@ -236,19 +264,19 @@ router.post("/like/:id", authMiddleware, PostController.like.bind(PostController
 
 /**
 * @swagger
-* /post/unlike/:id:
+* /post/unlike/{post_id}:
 *   post:
 *     summary: unlike a post
 *     tags: [Post]
 *     security:
 *       - bearerAuth: []
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             isLiked: boolean
-*             postId: string
+*     parameters:
+*      - in: path
+*        name: post_id
+*        schema:
+*          type: string
+*        required: true
+*        description: ID of the post you want like to unlike
 *     responses:
 *       200:
 *         description: the updated post

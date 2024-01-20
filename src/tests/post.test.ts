@@ -1,8 +1,9 @@
 import { Express } from "express";
-import request from "supertest";
+import supertest from "supertest";
+import defaults from 'superagent-defaults';
 import initApp from "../app";
 import mongoose from "mongoose";
-import { IUser } from "../models/user";
+import User, { IUser } from "../models/user";
 import Post, { IPost } from "../models/post";
 
 let app: Express;
@@ -29,29 +30,32 @@ const post2: IPost = {
 const comment1 = { text: "hi" };
 
 let accessToken = "";
+let request;
 
 beforeAll(async () => {
     app = await initApp();
+    request = defaults(supertest(app));
     await Post.deleteMany();
-    const response = await request(app).post("/auth/register").send(user);
+    const response = await request.post("/auth/register").send(user);
     user._id = response.body._id;
-    // const response2 = await request(app).post("/auth/login").send(user);
     accessToken = response.body.accessToken;
+    request.set({ 'Authorization': `Bearer ${accessToken}` });
 });
 
 afterAll(async () => {
+    await User.findByIdAndDelete(user._id);
     await mongoose.connection.close();
 });
 
 describe("Post get tests", () => {
     test("Test Get All Posts - empty list", async () => {
-        const response = await request(app).get("/post");
+        const response = await request.get("/post");
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveLength(0);
     });
 
     test("Test Get Posts by user id - empty list", async () => {
-        const response = await request(app).get("/post/user/" + user._id);
+        const response = await request.get(`/post/user/${user._id}`);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveLength(0);
     });
@@ -59,7 +63,7 @@ describe("Post get tests", () => {
 
 describe("Post post tests", () => {
     test("Test Post a post", async () => {
-        const response = await request(app).post("/post").send(post);
+        const response = await request.post("/post").send(post);
         expect(response.statusCode).toBe(200);
         post._id = response.body._id;
         expect(response.body.text).toEqual(post.text);

@@ -24,6 +24,15 @@ class PostController extends BaseController<IPost>{
         super.getById(req, res);
     }
 
+    async getByUserId(req: AuthResquest, res: Response) {
+        try {
+            const posts = await this.model.find({ createdBy: req.params.user_id });
+            res.send(posts);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+
     async putById(req: AuthResquest, res: Response) {
         const _id = req.user._id;
         req.body.owner = _id;

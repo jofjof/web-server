@@ -11,11 +11,11 @@ export class BaseController<ModelType>{
     async get(req: Request, res: Response) {
         try {
             if (req.query.name) {
-                const students = await this.model.find({ name: req.query.name });
-                res.send(students);
+                const objs = await this.model.find({ name: req.query.name });
+                res.send(objs);
             } else {
-                const students = await this.model.find();
-                res.send(students);
+                const objs = await this.model.find();
+                res.send(objs);
             }
         } catch (err) {
             res.status(500).json({ message: err.message });
@@ -24,8 +24,8 @@ export class BaseController<ModelType>{
 
     async getById(req: Request, res: Response) {
         try {
-            const student = await this.model.findById(req.params.id);
-            res.send(student);
+            const obj = await this.model.findById(req.params.id);
+            res.send(obj);
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
