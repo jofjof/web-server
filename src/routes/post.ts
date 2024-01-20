@@ -146,7 +146,7 @@ router.post("/", authMiddleware, PostController.post.bind(PostController));
 
 /**
 * @swagger
-* /post/:id:
+* /post/:
 *   put:
 *     summary: modify a post
 *     tags: [Post]
@@ -166,7 +166,7 @@ router.post("/", authMiddleware, PostController.post.bind(PostController));
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.put("/:id", authMiddleware, PostController.putById.bind(PostController));
+router.put("/", authMiddleware, PostController.putById.bind(PostController));
 
 /**
 * @swagger
@@ -186,7 +186,7 @@ router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostControl
 
 /**
 * @swagger
-* /post/comment:
+* /post/comment/:id:
 *   post:
 *     summary: add a comment to a post
 *     tags: [Post]
@@ -207,11 +207,11 @@ router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostControl
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/comment", authMiddleware, PostController.comment.bind(PostController));
+router.post("/comment/:id", authMiddleware, PostController.comment.bind(PostController));
 
 /**
 * @swagger
-* /post/like:
+* /post/like/:id:
 *   post:
 *     summary: like a post
 *     tags: [Post]
@@ -232,6 +232,31 @@ router.post("/comment", authMiddleware, PostController.comment.bind(PostControll
 *             schema:
 *               $ref: '#/components/schemas/Post'
 */
-router.post("/like", authMiddleware, PostController.like.bind(PostController));
+router.post("/like/:id", authMiddleware, PostController.like.bind(PostController));
+
+/**
+* @swagger
+* /post/unlike/:id:
+*   post:
+*     summary: unlike a post
+*     tags: [Post]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             isLiked: boolean
+*             postId: string
+*     responses:
+*       200:
+*         description: the updated post
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Post'
+*/
+router.post("/unlike/:id", authMiddleware, PostController.unlike.bind(PostController));
 
 export default router;

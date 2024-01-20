@@ -114,7 +114,7 @@ router.get("/", userController.get.bind(userController));
 /**
 * @swagger
 * /user:
-*   get:
+*   put:
 *     summary: modify a user
 *     tags: [User]
 *     security:

@@ -7,7 +7,7 @@ export interface IMessage {
     _id?: string;
 }
 
-const messageSchema = new mongoose.Schema<IMessage>({
+export const messageSchema = new mongoose.Schema<IMessage>({
     user: {
         type: String,
         required: true,

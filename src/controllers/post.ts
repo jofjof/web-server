@@ -39,19 +39,35 @@ class PostController extends BaseController<IPost>{
     }
 
     async like(req: AuthResquest, res: Response) {
-        const isLiked = req.body.isLiked;
-        const postId = req.body.postId;
+        const postId = req.params.id;
         try {
             let requestedPost: IPost = await this.model.findById(postId);
-            if (isLiked && requestedPost.usersWhoLiked.find(({ _id }) => _id === req.user._id)
-                || !isLiked && !requestedPost.usersWhoLiked.find(({ _id }) => _id === req.user._id)) {
+            if (requestedPost.usersWhoLiked.find(({ _id }) => _id === req.user._id)) {
                 throw ("failed, can't like an already liked post");
             } else {
                 const _id = req.user._id;
-                req.body.owner = _id;
-                isLiked ? requestedPost.usersWhoLiked.push(_id) :
-                    requestedPost.usersWhoLiked = requestedPost.usersWhoLiked.filter
-                        (({ _id }) => _id === req.user._id)
+                // req.body.owner = _id;
+                // requestedPost.usersWhoLiked.push(_id);
+                const obj = await this.model.findByIdAndUpdate(postId,);
+                res.status(201).send(obj);
+            }
+        }
+        catch (err) {
+            res.status(406).send(err.message)
+        }
+    }
+
+    async unlike(req: AuthResquest, res: Response) {
+        const postId = req.params.id;
+        try {
+            let requestedPost: IPost = await this.model.findById(postId);
+            if (!requestedPost.usersWhoLiked.find(({ _id }) => _id === req.user._id)) {
+                throw ("failed, can't unlike an already unliked post");
+            } else {
+                const _id = req.user._id;
+                // req.body.owner = _id;
+                requestedPost.usersWhoLiked = requestedPost.usersWhoLiked.filter
+                    (({ _id }) => _id === req.user._id)
                 const obj = await this.model.findByIdAndUpdate(postId,);
                 res.status(201).send(obj);
             }
@@ -70,10 +86,10 @@ class PostController extends BaseController<IPost>{
             const obj = await this.model.findByIdAndUpdate(postId,);
             res.status(201).send(obj);
         }
-    catch(err) {
-        res.status(406).send(err.message)
+        catch (err) {
+            res.status(406).send(err.message)
+        }
     }
-}
 }
 
 export default new PostController();

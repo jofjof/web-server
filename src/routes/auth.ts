@@ -124,7 +124,7 @@ router.post("/login", authController.login);
 *   get:
 *     summary: logout a user
 *     tags: [Auth]
-*     description: refresh token has to be provided in the auth header
+*     description: logout a user
 *     security:
 *       - bearerAuth: []
 *     responses:
@@ -135,7 +135,7 @@ router.get("/logout", authController.logout);
 
 /**
 * @swagger
-* /auth/logout:
+* /auth/refresh:
 *   get:
 *     summary: get a new access token using the refresh token
 *     tags: [Auth]

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { IUser } from "./user";
-import Message, { IMessage } from "./message";
+import { IMessage, messageSchema } from "./message";
 
 export interface IChat {
     users: IUser[];
@@ -13,7 +13,7 @@ const chatSchema = new mongoose.Schema<IChat>({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    messages: [Message]
+    messages: { type: [messageSchema] }
 });
 
 export default mongoose.model<IChat>("Chat", chatSchema);
