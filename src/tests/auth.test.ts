@@ -32,7 +32,7 @@ describe("Auth tests", () => {
     expect(response.statusCode).toBe(201);
   });
 
-  test("Test Register exist email", async () => {
+  test("Test Register existing email", async () => {
     const response = await request(app)
       .post("/auth/register")
       .send(user);
@@ -54,34 +54,33 @@ describe("Auth tests", () => {
     accessToken = response.body.accessToken;
     refreshToken = response.body.refreshToken;
     expect(accessToken).toBeDefined();
+    expect(refreshToken).toBeDefined();
   });
 
   test("Test forbidden access without token", async () => {
-    const response = await request(app).get("/user");
+    const response = await request(app).get("/user/profile");
     expect(response.statusCode).toBe(401);
   });
 
   test("Test access with valid token", async () => {
     const response = await request(app)
-      .get("/user")
+      .get("/user/profile")
       .set("Authorization", "JWT " + accessToken);
     expect(response.statusCode).toBe(200);
   });
 
   test("Test access with invalid token", async () => {
     const response = await request(app)
-      .get("/user")
+      .get("/user/profile")
       .set("Authorization", "JWT 1" + accessToken);
     expect(response.statusCode).toBe(401);
   });
-
-  jest.setTimeout(10000);
 
   test("Test access after timeout of token", async () => {
     await new Promise(resolve => setTimeout(() => resolve("done"), 5000));
 
     const response = await request(app)
-      .get("/user")
+      .get("/user/profile")
       .set("Authorization", "JWT " + accessToken);
     expect(response.statusCode).not.toBe(200);
   });
@@ -99,7 +98,7 @@ describe("Auth tests", () => {
     newRefreshToken = response.body.refreshToken;
 
     const response2 = await request(app)
-      .get("/user")
+      .get("/user/profile")
       .set("Authorization", "JWT " + newAccessToken);
     expect(response2.statusCode).toBe(200);
   });

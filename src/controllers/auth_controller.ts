@@ -34,7 +34,7 @@ const login = async (req: Request, res: Response) => {
         return res.status(400).send("missing email or password");
     }
     try {
-        const user = await User.findOne({ 'email': email });
+        const user = await User.findOne({ 'email': email }).select('+password');
         if (!user) {
             return res.status(401).send("email or password incorrect");
         }
