@@ -100,7 +100,7 @@ router.post("/register", authController.register);
 * @swagger
 * /auth/login:
 *   post:
-*     summary: registers a new user
+*     summary: signs in a user
 *     tags: [Auth]
 *     requestBody:
 *       required: true

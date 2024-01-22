@@ -9,23 +9,16 @@ class UserController extends BaseController<IUser>{
     }
 
     async get(req: AuthRequest, res: Response) {
-        console.log("postStudent:" + req.body);
-        const _id = req.user._id;
-        req.body.owner = _id;
         super.get(req, res);
     }
 
     async getById(req: AuthRequest, res: Response) {
-        console.log("postStudent:" + req.body);
-        const _id = req.user._id;
-        req.body.owner = _id;
+        req.params.id = req.user._id;
         super.getById(req, res);
     }
 
     async putById(req: AuthRequest, res: Response) {
-        console.log("postStudent:" + req.body);
-        const _id = req.user._id;
-        req.body.owner = _id;
+        req.body._id = req.user._id;
         super.putById(req, res);
     }
 }
