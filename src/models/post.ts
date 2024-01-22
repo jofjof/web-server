@@ -7,7 +7,7 @@ export interface IPost {
     usersWhoLiked: string[];
     image?: string;
     _id?: string;
-    comments?: { user: string, text: string }[];
+    comments?: { user: PopulatedDoc<IUser>, text: string }[];
     createdBy: PopulatedDoc<IUser>;
 }
 
@@ -24,10 +24,10 @@ const postSchema = new mongoose.Schema<IPost>({
         type: String,
     },
     comments: [{
-        user: [{
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
-        }], text: String
+        }, text: String
     }],
     usersWhoLiked: [{
         type: mongoose.Schema.Types.ObjectId,

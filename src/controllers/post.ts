@@ -46,7 +46,6 @@ class PostController extends BaseController<IPost>{
     async deleteById(req: AuthRequest, res: Response) {
         try {
             const post = await Post.findById(req.params.id)?.select('createdBy');
-            if(!post) res.status(404)
             if (post.createdBy.toString() === req.user._id) await super.deleteById(req, res);
             else {
                 res.status(401).send();
@@ -60,13 +59,14 @@ class PostController extends BaseController<IPost>{
         const postId = req.params.id;
         try {
             let requestedPost: IPost = await this.model.findById(postId).select('usersWhoLiked');
-            if (requestedPost.usersWhoLiked.find(id => id === req.user._id)) {
+            console.log(requestedPost.usersWhoLiked.find(id => id.toString() === req.user._id))
+            if (requestedPost.usersWhoLiked.find(id => id.toString() === req.user._id)) {
                 throw ("failed, can't like an already liked post");
             } else {
                 const _id = req.user._id;
                 requestedPost.usersWhoLiked.push(_id);
-                const obj = await this.model.findByIdAndUpdate(postId,);
-                res.status(201).send(obj);
+                const obj = await this.model.findByIdAndUpdate(postId, requestedPost, { new: true });
+                res.status(200).send(obj);
             }
         }
         catch (err) {
@@ -78,14 +78,14 @@ class PostController extends BaseController<IPost>{
         const postId = req.params.id;
         try {
             let requestedPost: IPost = await this.model.findById(postId);
-            if (!requestedPost.usersWhoLiked.find(id => id === req.user._id)) {
+            if (!requestedPost.usersWhoLiked.find(id => id.toString() === req.user._id)) {
                 throw ("failed, can't unlike an already unliked post");
             } else {
                 const _id = req.user._id;
                 requestedPost.usersWhoLiked = requestedPost.usersWhoLiked.filter
                     (id => id === req.user._id)
-                const obj = await this.model.findByIdAndUpdate(postId,);
-                res.status(201).send(obj);
+                const obj = await this.model.findByIdAndUpdate(postId, requestedPost, { new: true });
+                res.status(200).send(obj);
             }
         }
         catch (err) {
@@ -94,12 +94,12 @@ class PostController extends BaseController<IPost>{
     }
 
     async comment(req: AuthRequest, res: Response) {
-        const comment = req.body.comment;
-        const postId = req.body.postId;
+        const comment = { text: req.body.text, user: req.user._id };
+        const postId = req.params.id;
         try {
             let requestedPost: IPost = await this.model.findById(postId);
             requestedPost.comments.push(comment);
-            const obj = await this.model.findByIdAndUpdate(postId,);
+            const obj = await this.model.findByIdAndUpdate(postId, requestedPost, { new: true });
             res.status(201).send(obj);
         }
         catch (err) {

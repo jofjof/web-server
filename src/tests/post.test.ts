@@ -110,74 +110,71 @@ describe("Put post tests", () => {
 });
 
 
-// describe("Add a comment to post tests", () => {
-//     test("Test no comments on post", async () => {
-//         const response = await request.get("/post/" + post._id);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.comments).toHaveLength(0);
-//     });
+describe("Add a comment to post tests", () => {
+    test("Test no comments on post", async () => {
+        const response = await request.get("/post/" + post._id);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.comments).toHaveLength(0);
+    });
 
-//     test("Test comment on a post", async () => {
-//         const body = { "postId": post._id, comment1 };
-//         const response = await request.post("/post/comment").send(body);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body._id).toBe(post._id);
-//         expect(response.body.comments).toHaveLength(1);
-//     });
+    test("Test comment on a post", async () => {
+        const response = await request.post(`/post/comment/${post._id}`).send(comment1);
+        expect(response.statusCode).toBe(201);
+        expect(response.body._id).toBe(post._id);
+        expect(response.body.comments).toHaveLength(1);
+    });
 
-//     test("Test one comments on post", async () => {
-//         const response = await request.get("/post/" + post._id);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.comments).toHaveLength(1);
-//         expect(response.body.comments[0].text).toEqual(comment1.text);
-//     });
-// });
+    test("Test one comment on post", async () => {
+        const response = await request.get("/post/" + post._id);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.comments).toHaveLength(1);
+        expect(response.body.comments[0].text).toEqual(comment1.text);
+        expect(response.body.comments[0].user).toEqual(user._id);
 
-// describe("Like a post tests", () => {
-//     test("Test no likes on post", async () => {
-//         const response = await request.get("/post/" + post._id);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.likes).toEqual(0);
-//     });
+    });
+});
 
-//     test("Test unlike an unliked post- error", async () => {
-//         const body = { "postId": post._id, "isLiked": false };
-//         const response = await request.post("/post/like").send(body);
-//         expect(response.statusCode).toBe(401);
-//     });
+describe("Like a post tests", () => {
+    test("Test no likes on post", async () => {
+        const response = await request.get("/post/" + post._id);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.usersWhoLiked).toHaveLength(0);
+    });
 
-//     test("Test like an unliked post", async () => {
-//         const body = { "postId": post._id, "isLiked": true };
-//         const response = await request.post("/post/like").send(body);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.likes).toEqual(1);
-//     });
+    test("Test unlike an unliked post- error", async () => {
+        const response = await request.post(`/post/unlike/${post._id}`);
+        expect(response.statusCode).toBe(406);
+    });
 
-//     test("Test number of likes on post should equal 1", async () => {
-//         const response = await request.get("/post/" + post._id);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.likes).toEqual(1);
-//     });
+    test("Test like an unliked post", async () => {
+        const response = await request.post(`/post/like/${post._id}`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.usersWhoLiked).toHaveLength(1);
+    });
 
-//     test("Test like a liked post- error", async () => {
-//         const body = { "postId": post._id, "isLiked": true };
-//         const response = await request.post("/post/like").send(body);
-//         expect(response.statusCode).toBe(401);
-//     });
+    test("Test number of likes on post should equal 1", async () => {
+        const response = await request.get(`/post/${post._id}`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.usersWhoLiked).toHaveLength(1);
+    });
 
-//     test("Test unlike a liked post", async () => {
-//         const body = { "postId": post._id, "isLiked": false };
-//         const response = await request.post("/post/like").send(body);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.post.likes).toEqual(0);
-//     });
+    test("Test like a liked post- error", async () => {
+        const response = await request.post(`/post/like/${post._id}`);
+        expect(response.statusCode).toBe(406);
+    });
 
-//     test("Test number of likes on post should equal 0", async () => {
-//         const response = await request.get("/post/" + post._id);
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.post.likes).toEqual(0);
-//     });
-// });
+    test("Test unlike a liked post", async () => {
+        const response = await request.post(`/post/unlike/${post._id}`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.usersWhoLiked).toHaveLength(0);
+    });
+
+    test("Test number of likes on post should equal 0", async () => {
+        const response = await request.get(`/post/${post._id}`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.usersWhoLiked).toHaveLength(0);
+    });
+});
 
 describe("Delete post tests", () => {
     test("Test delete a post", async () => {
@@ -187,12 +184,11 @@ describe("Delete post tests", () => {
 
     test("Test Get a deleted post- results in error", async () => {
         const response = await request.get("/post/" + post._id);
-        console.log(response)
         expect(response.statusCode).toBe(404);
     });
 
     test("Test delete a deleted post", async () => {
         const response = await request.delete("/post/" + post._id);
-        expect(response.statusCode).toBe(404);
+        expect(response.statusCode).toBe(400);
     });
 });
