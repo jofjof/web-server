@@ -77,7 +77,7 @@ describe("Auth tests", () => {
   });
 
   test("Test access after timeout of token", async () => {
-    await new Promise(resolve => setTimeout(() => resolve("done"), 5000));
+    await new Promise(resolve => setTimeout(() => resolve("done"), 3000));
 
     const response = await request(app)
       .get("/user/profile")
