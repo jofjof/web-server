@@ -250,7 +250,7 @@ router.post("/", authMiddleware, PostController.post.bind(PostController));
 *       401:
 *         description: Unauthorized
 */
-router.put("/", authMiddleware, PostController.putById.bind(PostController));
+router.put("/", authMiddleware, PostController.put.bind(PostController));
 
 /**
 * @swagger

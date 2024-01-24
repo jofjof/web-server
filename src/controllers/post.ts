@@ -31,10 +31,10 @@ class PostController extends BaseController<IPost>{
         }
     }
 
-    async putById(req: AuthRequest, res: Response) {
+    async put(req: AuthRequest, res: Response) {
         try {
             const post = await Post.findById(req.body._id).select('createdBy');
-            if (post.createdBy.toString() === req.user._id) await super.putById(req, res);
+            if (post.createdBy.toString() === req.user._id) await super.put(req, res);
             else {
                 res.status(401).send();
             }
@@ -59,7 +59,6 @@ class PostController extends BaseController<IPost>{
         const postId = req.params.id;
         try {
             let requestedPost: IPost = await this.model.findById(postId).select('usersWhoLiked');
-            console.log(requestedPost.usersWhoLiked.find(id => id.toString() === req.user._id))
             if (requestedPost.usersWhoLiked.find(id => id.toString() === req.user._id)) {
                 throw ("failed, can't like an already liked post");
             } else {

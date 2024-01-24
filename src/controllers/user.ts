@@ -17,9 +17,9 @@ class UserController extends BaseController<IUser>{
         super.getById(req, res);
     }
 
-    async putById(req: AuthRequest, res: Response) {
+    async put(req: AuthRequest, res: Response) {
         req.body._id = req.user._id;
-        super.putById(req, res);
+        super.put(req, res);
     }
 }
 

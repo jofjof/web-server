@@ -9,14 +9,12 @@ class ChatController extends BaseController<IChat>{
     }
 
     async get(req: AuthRequest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.get(req, res);
     }
 
     async getById(req: AuthRequest, res: Response) {
-        console.log("postStudent:" + req.body);
         const _id = req.user._id;
         req.body.owner = _id;
         super.getById(req, res);

@@ -135,6 +135,6 @@ router.get("/", userController.get.bind(userController));
 *       406:
 *         description: Not Acceptable
 */
-router.put("/", authMiddleware, userController.putById.bind(userController));
+router.put("/", authMiddleware, userController.put.bind(userController));
 
 export default router;

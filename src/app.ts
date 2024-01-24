@@ -14,7 +14,7 @@ const initApp = (): Promise<Express> => {
     db.once("open", () => console.log("Connected to Database"));
     db.on("error", (error) => console.error(error));
     const url = process.env.DB_URL;
-    mongoose.connect(url!).then(() => {
+    mongoose.connect(url!, { dbName: "web-server-db" }).then(() => {
       const app = express();
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));

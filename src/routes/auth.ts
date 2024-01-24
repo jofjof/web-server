@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import authController from "../controllers/auth";
+import passport from "../passport";
 /**
 * @swagger
 * tags:
@@ -124,7 +125,7 @@ import authController from "../controllers/auth";
 *           schema:
 *             $ref: '#/components/schemas/InputUser'
 *     responses:
-*       200:
+*       201:
 *         description: The new user
 *         content:
 *           application/json:
@@ -230,5 +231,19 @@ router.get("/logout", authController.logout);
 *            error: No refresh token was provided
 */
 router.get("/refresh", authController.refresh);
+
+router.get(
+    '/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get(
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+        // Successful authentication, redirect to home or profile page
+        res.redirect('/user/profile');
+    }
+);
 
 export default router;

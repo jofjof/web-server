@@ -7,7 +7,7 @@ import User, { IUser } from "../models/user";
 let app: Express;
 const user: IUser = {
   name: "test_user",
-  email: "testUser@test.com",
+  email: "auth-test@test.com",
   password: "1234567890",
 }
 
@@ -17,6 +17,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await User.deleteMany({ 'email': user.email });
   await mongoose.connection.close();
 });
 

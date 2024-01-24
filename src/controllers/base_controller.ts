@@ -37,7 +37,7 @@ export class BaseController<ModelType>{
         }
     }
 
-    async putById(req: Request, res: Response) {
+    async put(req: Request, res: Response) {
         try {
             const obj = await this.model.findByIdAndUpdate(req.body._id, req.body, { new: true });
             res.status(200).send(obj);

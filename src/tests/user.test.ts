@@ -9,13 +9,13 @@ import supertest from "supertest";
 let app: Express;
 let user: IUser = {
     name: "test",
-    email: "test@student.post.test",
+    email: "user-test@student.post.test",
     password: "1234567890",
 }
 
 const user2: IUser = {
     name: "test2",
-    email: "another@email.com",
+    email: "user-test2@email.com",
     password: "1111",
 }
 
@@ -23,7 +23,7 @@ let authorizedRequest;
 
 beforeAll(async () => {
     app = await initApp();
-    await User.deleteMany();
+    await User.deleteMany({});
     const response = await request(app).post("/auth/register").send(user);
     user._id = response.body._id;
     delete user['password'];
