@@ -9,7 +9,6 @@ import authMiddleware from "../common/auth_middleware";
 *   description: The User API
 */
 
-
 /**
 * @swagger
 * components:
@@ -77,7 +76,7 @@ import authMiddleware from "../common/auth_middleware";
 * @swagger
 * /user/profile:
 *   get:
-*     summary: get user's data
+*     summary: Get user's data
 *     tags: [User]
 *     security:
 *       - bearerAuth: []
@@ -88,6 +87,10 @@ import authMiddleware from "../common/auth_middleware";
 *           application/json:
 *             schema:
 *               $ref: '#/components/schemas/User'
+*       404:
+*         description: Not Found
+*       500:
+*         description: Internal server error
 */
 router.get("/profile", authMiddleware, userController.getById.bind(userController));
 
@@ -108,6 +111,8 @@ router.get("/profile", authMiddleware, userController.getById.bind(userControlle
 *               type: array
 *               items:
 *                   $ref: '#/components/schemas/BasicUser'
+*       500:
+*         description: Internal server error
 */
 router.get("/", userController.get.bind(userController));
 
@@ -127,6 +132,8 @@ router.get("/", userController.get.bind(userController));
 *             schema:
 *               items:
 *                   $ref: '#/components/schemas/User'
+*       406:
+*         description: Not Acceptable
 */
 router.put("/", authMiddleware, userController.putById.bind(userController));
 

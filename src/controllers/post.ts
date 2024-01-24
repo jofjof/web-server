@@ -15,7 +15,7 @@ class PostController extends BaseController<IPost>{
     }
 
     async get(req: AuthRequest, res: Response) {
-        super.get(req, res);
+        super.get(req, res, "comments");
     }
 
     async getById(req: AuthRequest, res: Response) {
@@ -24,7 +24,7 @@ class PostController extends BaseController<IPost>{
 
     async getByUserId(req: AuthRequest, res: Response) {
         try {
-            const posts = await this.model.find({ createdBy: req.params.user_id });
+            const posts = await this.model.find({ createdBy: req.params.user_id }).select("-comments");
             res.send(posts);
         } catch (err) {
             res.status(500).json({ message: err.message });

@@ -10,7 +10,6 @@ import authMiddleware from "../common/auth_middleware";
 *   description: The Posts API
 */
 
-
 /**
 * @swagger
 * components:
@@ -21,18 +20,34 @@ import authMiddleware from "../common/auth_middleware";
 *       bearerFormat: JWT
 */
 
-
-// TODO: create a schema for PostInput and Post ig
 /**
 * @swagger
 * components:
 *   schemas:
-*     Post:
+*     InputPost:
 *       type: object
 *       required:
 *         - text
 *       properties:
-*         id:
+*         text:
+*           type: string
+*           description: The post's text
+*         image:
+*           type: string
+*           description: path to the post's image
+*         image_description:
+*           type: string
+*           description: description for image, to be made into image
+*       example:
+*         text: 'this is a post'
+*         image: '/path/to/image'
+*     OutputPost:
+*       type: object
+*       required:
+*         - text
+*         - _id
+*       properties:
+*         _id:
 *           type: string
 *           description: The post's id
 *         text:
@@ -66,23 +81,64 @@ import authMiddleware from "../common/auth_middleware";
 *         text: 'this is a post'
 *         user_name: 'bobo'
 *         image: '/path/to/image'
+*         isLiked: false
+*     BasicOutputPost:
+*       type: object
+*       required:
+*         - text
+*         - _id
+*       properties:
+*         _id:
+*           type: string
+*           description: The post's id
+*         text:
+*           type: string
+*           description: The post's text
+*         image:
+*           type: string
+*           description: path to the post's image
+*         date:
+*           type: date
+*           description: The post's creation time
+*         likes_amount:
+*           type: integer
+*           description: the amount of likes the post has
+*         comments_amount:
+*           type: integer
+*           description: the amount of comments the post has
+*         user_name:
+*           type: string
+*           description: the name of the user who created the post
+*         user_image:
+*           type: string
+*           description: the image of the user who created the post
+*         isLiked:
+*           type: boolean
+*           description: is the post iked by the current user
+*       example:
+*         text: 'this is a post'
+*         user_name: 'bobo'
+*         image: '/path/to/image'
+*         isLiked: false
 */
 
 /**
 * @swagger
 * /post:
 *   get:
-*     summary: get all posts
+*     summary: Get all posts
 *     tags: [Post]
 *     responses:
 *       200:
-*         description: all posts
+*         description: All posts
 *         content:
 *           application/json:
 *             schema:
 *               type: array
 *               items:
-*                   $ref: '#/components/schemas/Post'
+*                   $ref: '#/components/schemas/BasicOutputPost'
+*       500:
+*         description: Internal server error
 */
 router.get("/", PostController.get.bind(PostController));
 
@@ -90,7 +146,7 @@ router.get("/", PostController.get.bind(PostController));
 * @swagger
 * /post/{id}:
 *   get:
-*     summary: get post by id
+*     summary: Get post by id
 *     tags: [Post]
 *     parameters:
 *      - in: path
@@ -105,7 +161,11 @@ router.get("/", PostController.get.bind(PostController));
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Post'
+*               $ref: '#/components/schemas/OutputPost'
+*       404:
+*         description: Not Found
+*       500:
+*         description: Internal server error
 */
 router.get("/:id", PostController.getById.bind(PostController));
 
@@ -113,7 +173,7 @@ router.get("/:id", PostController.getById.bind(PostController));
 * @swagger
 * /post/user/{user_id}:
 *   get:
-*     summary: get all posts of user by user's id
+*     summary: Get all posts of user by user's id
 *     tags: [Post]
 *     security:
 *       - bearerAuth: []
@@ -132,7 +192,9 @@ router.get("/:id", PostController.getById.bind(PostController));
 *             schema:
 *               type: array
 *               items:
-*                   $ref: '#/components/schemas/Post'
+*                   $ref: '#/components/schemas/BasicOutputPost'
+*       500:
+*         description: Internal server error
 */
 router.get("/user/:user_id", PostController.getByUserId.bind(PostController));
 
@@ -140,7 +202,7 @@ router.get("/user/:user_id", PostController.getByUserId.bind(PostController));
 * @swagger
 * /post:
 *   post:
-*     summary: create a new post
+*     summary: Create a new post
 *     tags: [Post]
 *     security:
 *       - bearerAuth: []
@@ -149,14 +211,16 @@ router.get("/user/:user_id", PostController.getByUserId.bind(PostController));
 *       content:
 *         application/json:
 *           schema:
-*             $ref: '#/components/schemas/Post'
+*             $ref: '#/components/schemas/InputPost'
 *     responses:
-*       200:
-*         description: the created post
+*       201:
+*         description: The created post
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Post'
+*               $ref: '#/components/schemas/OutputPost'
+*       406:
+*         description: Not Acceptable
 */
 router.post("/", authMiddleware, PostController.post.bind(PostController));
 
@@ -173,14 +237,18 @@ router.post("/", authMiddleware, PostController.post.bind(PostController));
 *       content:
 *         application/json:
 *           schema:
-*             $ref: '#/components/schemas/Post'
+*             $ref: '#/components/schemas/InputPost'
 *     responses:
 *       200:
 *         description: the updated post
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Post'
+*               $ref: '#/components/schemas/OutputPost'
+*       400:
+*         description: Bad Request
+*       401:
+*         description: Unauthorized
 */
 router.put("/", authMiddleware, PostController.putById.bind(PostController));
 
@@ -188,7 +256,7 @@ router.put("/", authMiddleware, PostController.putById.bind(PostController));
 * @swagger
 * /post/{post_id}:
 *   delete:
-*     summary: delete a post
+*     summary: Delete a post
 *     tags: [Post]
 *     parameters:
 *      - in: path
@@ -202,6 +270,10 @@ router.put("/", authMiddleware, PostController.putById.bind(PostController));
 *     responses:
 *       200:
 *         description: the post was successfuly deleted
+*       400:
+*         description: Bad Request
+*       401:
+*         description: Unauthorized
 */
 router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostController));
 
@@ -228,12 +300,14 @@ router.delete("/:id", authMiddleware, PostController.deleteById.bind(PostControl
 *             postId: string
 *             $ref: '#/components/schemas/Comment'
 *     responses:
-*       200:
+*       201:
 *         description: the updated post
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Post'
+*               $ref: '#/components/schemas/OutputPost'
+*       406:
+*         description: Not Acceptable
 */
 router.post("/comment/:id", authMiddleware, PostController.comment.bind(PostController));
 
@@ -258,7 +332,9 @@ router.post("/comment/:id", authMiddleware, PostController.comment.bind(PostCont
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Post'
+*               $ref: '#/components/schemas/OutputPost'
+*       406:
+*         description: Not Acceptable
 */
 router.post("/like/:id", authMiddleware, PostController.like.bind(PostController));
 
@@ -283,7 +359,9 @@ router.post("/like/:id", authMiddleware, PostController.like.bind(PostController
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Post'
+*               $ref: '#/components/schemas/OutputPost'
+*       406:
+*         description: Not Acceptable
 */
 router.post("/unlike/:id", authMiddleware, PostController.unlike.bind(PostController));
 

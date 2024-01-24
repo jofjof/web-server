@@ -8,15 +8,10 @@ export class BaseController<ModelType>{
         this.model = model;
     }
 
-    async get(req: Request, res: Response) {
+    async get(req: Request, res: Response, objectToEmit?:string) {
         try {
-            if (req.query.name) {
-                const objs = await this.model.find({ name: req.query.name });
-                res.send(objs);
-            } else {
-                const objs = await this.model.find();
-                res.send(objs);
-            }
+            const objs = await this.model.find().select(`-${objectToEmit}`);
+            res.send(objs);
         } catch (err) {
             res.status(500).json({ message: err.message });
         }

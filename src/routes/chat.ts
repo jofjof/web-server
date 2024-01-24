@@ -70,20 +70,20 @@ import authMiddleware from "../common/auth_middleware";
 * @swagger
 * components:
 *   schemas:
-*     Comment:
+*     Message:
 *       type: object
 *       required:
 *         - text
 *       properties:
 *         id:
 *           type: string
-*           description: The comment's id
+*           description: The message's id
 *         text:
 *           type: string
-*           description: The comment's substance
+*           description: The message's substance
 *         user_id:
 *           type: string
-*           description: the id of the user who created the comment
+*           description: the id of the user who created the message
 *       example:
 *         id: '1233'
 *         text: 'this is a comment'
@@ -107,6 +107,8 @@ import authMiddleware from "../common/auth_middleware";
 *               type: array
 *               items:
 *                   $ref: '#/components/schemas/Chat'
+*       500:
+*         description: Internal server error
 */
 router.get("/", authMiddleware, ChatController.get.bind(ChatController));
 
@@ -132,6 +134,8 @@ router.get("/", authMiddleware, ChatController.get.bind(ChatController));
 *           application/json:
 *             schema:
 *               $ref: '#/components/schemas/Chat'
+*       500:
+*         description: Internal server error
 */
 router.get("/:id", authMiddleware, ChatController.getById.bind(ChatController));
 

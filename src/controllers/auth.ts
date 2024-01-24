@@ -34,7 +34,7 @@ const login = async (req: Request, res: Response) => {
         return res.status(400).send("missing email or password");
     }
     try {
-        const user = await User.findOne({ 'email': email }).select('+password');
+        const user = await User.findOne({ 'email': email }).select('+password +refreshTokens');
         if (!user) {
             return res.status(401).send("email or password incorrect");
         }
@@ -46,7 +46,7 @@ const login = async (req: Request, res: Response) => {
         const tokens = await createTokens(user);
         return res.status(200).send(tokens);
     } catch (err) {
-        return res.status(400).send("error missing email or password");
+        return res.status(400);
     }
 }
 
@@ -75,15 +75,15 @@ const logout = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
     const authHeader = req.headers['authorization'];
-    const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-    if (!refreshToken) return res.sendStatus(401);
+    const refreshToken = authHeader && authHeader.split(' ')[1].replace(/\"/g, ''); // Bearer <token>
+    if (!refreshToken) return res.status(401).send("No refresh token was provided");
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, user: { '_id': string }) => {
         if (err) {
             console.log(err);
             return res.sendStatus(401);
         }
         try {
-            const userDb = await User.findOne({ '_id': user._id });
+            const userDb = await User.findOne({ '_id': user._id }).select('+refreshTokens');;
             if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
                 userDb.refreshTokens = [];
                 await userDb.save();
