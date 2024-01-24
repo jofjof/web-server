@@ -8,7 +8,7 @@ let app: Express;
 const user: IUser = {
     name: "test",
     email: "chat-test@student.post.test",
-    password: "1234567890",
+    password: "123567890",
 }
 
 const user2: IUser = {
