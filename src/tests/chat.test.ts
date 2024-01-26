@@ -10,12 +10,12 @@ const user: IUser = {
     email: "chat-test@student.post.test",
     password: "123567890",
 }
-
 const user2: IUser = {
     name: "test2",
     email: "another@email.com",
     password: "1111",
 }
+
 let accessToken = "";
 
 beforeAll(async () => {

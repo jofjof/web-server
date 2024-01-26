@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import authController from "../controllers/auth";
-import passport from "../passport";
+// import passport from "../passport";
 /**
 * @swagger
 * tags:
@@ -232,18 +232,18 @@ router.get("/logout", authController.logout);
 */
 router.get("/refresh", authController.refresh);
 
-router.get(
-    '/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+// router.get(
+//     '/google',
+//     passport.authenticate('google', { scope: ['profile', 'email'] })
+// );
 
-router.get(
-    '/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
-    (req, res) => {
-        // Successful authentication, redirect to home or profile page
-        res.redirect('/user/profile');
-    }
-);
+// router.get(
+//     '/google/callback',
+//     passport.authenticate('google', { failureRedirect: '/' }),
+//     (req, res) => {
+//         // Successful authentication, redirect to home or profile page
+//         res.redirect('/user/profile');
+//     }
+// );
 
 export default router;
