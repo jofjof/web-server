@@ -7,6 +7,8 @@ const register = async (req: Request, res: Response) => {
     const email = req.body.email;
     const password = req.body.password;
     const name = req.body.name;
+    const image = req.body.image;
+
     if (!email || !password) {
         return res.status(400).send("missing email or password");
     }
@@ -17,7 +19,7 @@ const register = async (req: Request, res: Response) => {
         }
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt);
-        const response = await User.create({ 'email': email, 'name': name, 'password': encryptedPassword });
+        const response = await User.create({ 'email': email, 'name': name, 'password': encryptedPassword, image: image });
         const tokens = await createTokens(response);
         const user = { ...response['_doc'], ...tokens };
         delete user['refreshTokens'];

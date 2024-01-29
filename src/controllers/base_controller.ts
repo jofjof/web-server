@@ -49,7 +49,6 @@ export class BaseController<ModelType>{
 
     async deleteById(req: Request, res: Response) {
         try {
-            console.log(req.params.id);
             await this.model.findByIdAndDelete(req.params.id);
             res.status(200).send();
         } catch (err) {
