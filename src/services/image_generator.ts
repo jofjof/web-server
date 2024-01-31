@@ -1,22 +1,5 @@
 import axios from "axios";
-import multer from "multer";
-import { Request } from 'express';
 import * as fs from 'fs';
-import * as path from 'path';
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/')
-    },
-    filename: function (req, file, cb) {
-        const ext = file.originalname.split('.')
-            .filter(Boolean) // removes empty extensions (e.g. `filename...txt`)
-            .slice(1)
-            .join('.')
-        cb(null, Date.now() + "." + ext)
-    }
-})
-const upload = multer({ storage: storage });
 
 export async function generateImage(prompt: string) {
     try {
@@ -31,16 +14,16 @@ export async function generateImage(prompt: string) {
             data: { prompt: prompt }
         };
         let response = await axios.request(options);
-        const status_url = response.data.status_url;
         const statusOptions = {
             method: 'GET',
-            url: status_url,
+            url: response.data.status_url,
             headers: {
                 accept: 'application/json',
                 authorization: `Bearer ${process.env.MONSTER_API_TOKEN}`,
             }
         };
-    
+
+        // Wait for image to be ready and keep querying the api
         for (let i = 0; i < 15; i++) {
             response = await axios.request(statusOptions);
             if (response.data.status === "COMPLETED") {
