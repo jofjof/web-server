@@ -232,18 +232,26 @@ router.get("/logout", authController.logout);
 */
 router.get("/refresh", authController.refresh);
 
-// router.get(
-//     '/google',
-//     passport.authenticate('google', { scope: ['profile', 'email'] })
-// );
+/**
+* @swagger
+* /auth/google:
+*   post:
+*     summary: Sign in or register a user using google
+*     tags: [Auth]
+*     description: Sign in or register a user using google account for data
+*     responses:
+*       200:
+*         description: The access & refresh tokens
+*         content: 
+*           application/json:
+*               schema:
+*                   $ref: '#components/schemas/Tokens'
+*       401:
+*         description: Unauthorized
+*         content:
+*         application/json:
+*/
+router.post("/google", authController.googleSignIn);
 
-// router.get(
-//     '/google/callback',
-//     passport.authenticate('google', { failureRedirect: '/' }),
-//     (req, res) => {
-//         // Successful authentication, redirect to home or profile page
-//         res.redirect('/user/profile');
-//     }
-// );
 
 export default router;
