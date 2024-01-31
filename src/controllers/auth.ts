@@ -120,7 +120,8 @@ const googleSignIn = async (req: Request, res: Response) => {
         const email = payload?.email;
         if (email) {
             let user = await User.findOne({ 'email': email });
-            if (!user) {
+            if (!user) { 
+                // create user in db if it doesn't already exist
                 user = await User.create(
                     {
                         'email': email,
@@ -173,5 +174,6 @@ export default {
     register,
     login,
     logout,
-    refresh
+    refresh,
+    googleSignIn
 }
