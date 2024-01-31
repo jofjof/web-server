@@ -35,7 +35,7 @@ import authMiddleware from "../common/auth_middleware";
 *         image:
 *           type: string
 *           description: path to the post's image
-*         image_description:
+*         image_prompt:
 *           type: string
 *           description: description for image, to be made into image
 *       example:

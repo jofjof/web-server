@@ -2,6 +2,7 @@ import { BaseController } from "./base_controller";
 import { Response } from "express";
 import { AuthRequest } from "../common/auth_middleware";
 import Post, { IPost } from "../models/post";
+import { generateImage } from "../services/image_generator";
 
 class PostController extends BaseController<IPost>{
     constructor() {
@@ -11,7 +12,17 @@ class PostController extends BaseController<IPost>{
     async post(req: AuthRequest, res: Response) {
         const _id = req.user._id;
         req.body.createdBy = _id;
-        super.post(req, res);
+
+        if (req.body.image_prompt) {
+            generateImage(req.body.image_prompt).then((image) => {
+                req.body.image = image;
+                super.post(req, res);
+            }).catch((err) => {
+                res.status(400).send("failed to generate image")
+            });
+        } else {
+            super.post(req, res);
+        }
     }
 
     async get(req: AuthRequest, res: Response) {
