@@ -4,7 +4,7 @@ import defaults from 'superagent-defaults';
 import initApp from "../app";
 import mongoose from "mongoose";
 import User, { IUser } from "../models/user";
-import { IPost } from "../models/post";
+import Post, { IPost } from "../models/post";
 
 let app: Express;
 const user: IUser = {
@@ -37,6 +37,7 @@ let request;
 beforeAll(async () => {
     app = await initApp();
     request = defaults(supertest(app));
+    await Post.deleteMany({});
     const response = await request.post("/auth/register").send(user);
     user._id = response.body._id;
     accessToken = response.body.accessToken;

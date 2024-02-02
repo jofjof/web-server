@@ -51,7 +51,7 @@ describe("User get tests", () => {
 
     });
 
-    test("Test Get user by id- unauthorizes", async () => {
+    test("Test Get user by id- unauthorized", async () => {
         const response = await request(app).get("/user/profile");
         expect(response.statusCode).toBe(401);
     });
